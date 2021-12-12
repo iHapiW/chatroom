@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QVBoxLayout, QTextEdit, QFrame
+from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QVBoxLayout, QFrame
 
 from models.User import User
 from controllers.utils import format_input, valid_username
