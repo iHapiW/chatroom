@@ -1,26 +1,36 @@
-from json import loads, dumps
+import re
 
-from models.Responses import Base, OK, CREATED, FOUND, BAD_REQUEST, UNAUTHORIZED
+from models.Log import LogFile
 
-def response(resp_name : str, message : str = None) -> bytes:
-  resp_name = resp_name.lower()
-  if resp_name == "ok":
-    data = OK(message)
-  elif resp_name == "created":
-    data = CREATED(message)
-  elif resp_name == "found":
-    data = FOUND(message)
-  elif resp_name == "bad_request":
-    data = BAD_REQUEST(message)
-  elif resp_name == "unauthorized":
-    data = UNAUTHORIZED(message)
-  else :
-    raise ValueError("Invalid Response Name")
+def format_input(text : str) -> str:
+  text = text.strip()
+  word_array = text.split()
+  formatted_words = []
+  for word in word_array:
+    if len(word) > 20:
+      x = 0
+      temp_list = []
+      while x < len(word):
+        if x+20 < len(word):
+          temp_list.append(word[x:x+20])
+        else:
+          temp_list.append(word[x:])
+        x+=20
+      for temp_word in temp_list:
+        formatted_words.append(temp_word)
+    else:
+      formatted_words.append(word)
+  text = " ".join(formatted_words)
+  return text
 
-  attributes = list(filter(lambda x : not x.startswith("_"),dir(Base)))
-  dictionary = dict()
-  for attribute in attributes:
-    attr_data = getattr(data,attribute)
-    dictionary[attribute] = attr_data
-  
-  return dumps(dictionary).encode("utf-8")
+def valid_username(username : str) -> bool:
+  username = username.strip()
+  if len(username) > 20 or len(username) < 3:
+    return False
+  pattern = re.compile("^[a-zA-Z0-9._]+$")
+  matched = bool(re.match(pattern,username))
+  return matched
+
+def do_at_exit(log : LogFile):
+  print("\nServer Closed")
+  log.close()

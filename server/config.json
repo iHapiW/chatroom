@@ -1,0 +1,1 @@
+{"server_ip": "127.0.0.1", "server_port": 65432, "log_directory_name": "Logs", "log_file_name": "log.txt", "db_user": "server_app", "db_user_passwd": "12345", "db_name": "chatroom"}

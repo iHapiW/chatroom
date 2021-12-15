@@ -1,42 +1,51 @@
-import sys
-
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QVBoxLayout, QFrame
-
+from PyQt5.QtWidgets import QDialog, QLineEdit, QMainWindow, QFrame, QLabel
 from models.User import User
-from controllers.utils import format_input, valid_username
 
-def send_button_slot(layout : QVBoxLayout ,inputText : QLineEdit, user : User) -> None:
-  text = format_input(inputText.displayText())
-  if len(text) > 0:
-    inputText.setText("")
-    label = QLabel()
-    label.setText(user.username + " > " + text)
-    label.setWordWrap(True)
-    layout.addWidget(label)
-    line = QFrame()
-    line.setFrameShape(QFrame.HLine)
-    layout.addWidget(line)
-    
+from models.Requests import Login, Message, Register
 
-def authorization_accepted(username_input : QLineEdit, error_layout : QVBoxLayout, dialog : QDialog) -> None:
-  username = username_input.displayText()
-  dialog.setMinimumHeight(111)
-  dialog.setMaximumHeight(111)
-  for i in reversed(range(error_layout.count())):
-    error_layout.itemAt(i).widget().setParent(None)
-  if not valid_username(username):
-    dialog.setMinimumHeight(200)
-    dialog.setMaximumHeight(200)
-    error = QLabel()
-    error.setText("Error: Username Should Only Contain [A-Z][a-z][0-9] or underline & Between 8 to 20 Characters!")
-    error.setStyleSheet("color:red")
-    error.setWordWrap(True)
-    error.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-    error_layout.addWidget(error)
-  else:
-    dialog.setText(User(username))
+def register(dialog : QDialog) -> None:
+  dialog.clearError()
+  usernameInput : QLineEdit = dialog.usernameInput
+  passwdInput : QLineEdit = dialog.passwdInput
+  username = usernameInput.text()
+  password = passwdInput.text()
+  request = Register({"uname" : username, "passwd" : password})
+  dialog.connection.send(request.dump())
+  response = dialog.connection.recieve()
+  if response['type'] == "error":
+    dialog.showError(response['content']['message'])
+  elif response['code'] == 201:
+    dialog.authenticated(User(username,password,response['content']['token']))
     dialog.accept()
-    
-def authorization_rejected() -> None:
-  sys.exit()
+
+def login(dialog : QDialog):
+  dialog.clearError()
+  usernameInput : QLineEdit = dialog.usernameInput
+  passwdInput : QLineEdit = dialog.passwdInput
+  username = usernameInput.text()
+  password = passwdInput.text()
+  request = Login({"uname" : username, "passwd": password})
+  dialog.connection.send(request.dump())
+  response = dialog.connection.recieve()
+  if response['type'] == "error":
+    dialog.showError(response['content']['message'])
+  elif response['code'] == 202:
+    dialog.authenticated(User(username,password,response['content']['token']))
+    dialog.accept()
+
+def send_message(base : QMainWindow):
+  input_text : QLineEdit = base.inputText
+  text = input_text.text()
+  token = base.user.token
+  request = Message({"text" : text, "token" : token})
+  base.connection.send(request.dump())
+  input_text.setText("")
+
+def print_message(text : str, base : QMainWindow):
+  message = QLabel()
+  message.setText(text)
+  message.setWordWrap(True)
+  base.chatLayout.addWidget(message)
+  line = QFrame()
+  line.setFrameShape(QFrame.HLine)
+  base.chatLayout.addWidget(line)

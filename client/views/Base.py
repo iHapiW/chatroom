@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uifiles/Base.ui'
+# Form implementation generated from reading ui file 'interfaces/Base.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         MainWindow.setFont(font)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("uifiles/../../assets/icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("interfaces/../../assets/icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -69,12 +69,12 @@ class Ui_MainWindow(object):
         self.scrollArea.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidget = QtWidgets.QWidget()
-        self.scrollAreaWidget.setGeometry(QtCore.QRect(0, 0, 344, 340))
-        self.scrollAreaWidget.setObjectName("scrollAreaWidget")
-        self.chatLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidget)
+        self.chatWidget = QtWidgets.QWidget()
+        self.chatWidget.setGeometry(QtCore.QRect(0, 0, 344, 340))
+        self.chatWidget.setObjectName("chatWidget")
+        self.chatLayout = QtWidgets.QVBoxLayout(self.chatWidget)
         self.chatLayout.setObjectName("chatLayout")
-        self.scrollArea.setWidget(self.scrollAreaWidget)
+        self.scrollArea.setWidget(self.chatWidget)
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
